@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ig-tool-use"
+version = "0.1.0"
+description = "Information-Gain Guided Tool Deferral for Tool-Augmented LLM Agents"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.1",
+    "transformers>=4.40",
+    "peft>=0.10",
+    "datasets>=2.20",
+    "accelerate>=0.30",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "tqdm",
+    "typer[all]>=0.12",
+    "rich",
+    "vllm>=0.4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "black", "ruff"]
+
+[project.scripts]
+ig-experiment = "ig_tool_use.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ig_tool_use"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
