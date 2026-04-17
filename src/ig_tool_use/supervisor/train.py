@@ -33,10 +33,10 @@ log = logging.getLogger(__name__)
 
 class SupervisorModel:
     def __init__(self, model, tokenizer, device: str = "cuda", max_length: int = 512):
-        self.model = model
         self.tokenizer = tokenizer
         self.device = device
         self.max_length = max_length
+        self.model = model.to(device)
         self.model.eval()
 
     def to(self, device: str) -> "SupervisorModel":
