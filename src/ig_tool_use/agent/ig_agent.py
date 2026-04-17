@@ -217,25 +217,25 @@ class IGAgent:
             raw = self.rollout.generate_step(rollout_prompt, step)
             model_val = _parse_step_val(raw, step)
 
-            # Build the supervisor state with the model's output.
+            # Build the supervisor state with the model's output for the current step,
+            # keeping previously finalized values for earlier steps.
             if model_val is not None:
-                s1 = step_vals[0] if len(step_vals) > 0 else None
-                s2 = step_vals[1] if len(step_vals) > 1 else None
-                s3 = model_val if step == 3 else None
-                sup_state_model = make_supervisor_state(
-                    sample.x, sample.y,
-                    step1_val=s1 if step >= 1 else None,
-                    step2_val=s2 if step >= 2 else None,
-                    step3_val=s3 if step == 3 else None,
-                )
-                # Rebuild cleanly for the exact step.
-                _args = {1: {}, 2: {}, 3: {}}
-                _vals = {"step1_val": s1, "step2_val": s2}
-                if step == 3:
-                    _vals["step3_val"] = model_val
-                sup_state_model = make_supervisor_state(sample.x, sample.y, **_vals)
+                kw: dict = {}
+                # Carry forward all already-finalized step values.
+                if len(step_vals) >= 1:
+                    kw["step1_val"] = step_vals[0]
+                if len(step_vals) >= 2:
+                    kw["step2_val"] = step_vals[1]
+                # Overlay the model's output for the step being estimated.
+                if step == 1:
+                    kw["step1_val"] = model_val
+                elif step == 2:
+                    kw["step2_val"] = model_val
+                else:
+                    kw["step3_val"] = model_val
+                sup_state_model = make_supervisor_state(sample.x, sample.y, **kw)
             else:
-                sup_state_model = current_sup_state  # no change → IG will be ~0
+                sup_state_model = current_sup_state  # parse failed → IG ≈ 0
 
             # --- Estimate IG under model execution ---
             ig = compute_ig(self.supervisor, current_sup_state, sup_state_model, Y)
