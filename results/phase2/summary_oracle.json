@@ -1,0 +1,9 @@
+{
+  "accuracy": 0.914,
+  "mean_ig_1": 0.03721713399887085,
+  "mean_ig_2": 6.41176700592041e-05,
+  "mean_ig_3": 1.5490205804370343,
+  "deferral_rate_1": 0.0,
+  "deferral_rate_2": 0.0,
+  "deferral_rate_3": 1.0
+}
