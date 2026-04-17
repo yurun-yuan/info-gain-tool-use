@@ -177,6 +177,7 @@ def load_supervisor(
     base = AutoModelForCausalLM.from_pretrained(base_model_name)
     model = PeftModel.from_pretrained(base, str(checkpoint_dir))
     model = model.merge_and_unload()  # fuse LoRA weights for faster inference
+    model = model.to(device)
 
     return SupervisorModel(model, tokenizer, device=device, max_length=max_length)
 
